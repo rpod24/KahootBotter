@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        // our socket.io code goes here
+
+        var socketio = io.connect("68.7.181.179:8001");
+
+        socketio.on("message_to_client", function (data) {
+            document.getElementById("chatlog").innerHTML = ("<hr/>" +
+                data['message']);
+        });
+        socketio.on("endConnection", function (state) {
+            window.close();
+        });
+        socketio.on("IsTrue", function (state) {
+            if (state) {
+                document.getElementById("Bot").style.display = "block";
+                document.getElementById("PassDIV").style.display = "none";
+            }
+        });
+        function sendMessage() {
+            var Pass = document.getElementById("Pass").value;
+            var Pin = document.getElementById("Pin").value;
+            var Bots = document.getElementById("Number").value;
+            var Names = document.getElementById("Name").value;
+            socketio.emit("message_to_server", { pass: Pass, pin: Pin, bots: Bots, name: Names });
+        }
+        function checkPass() {
+            var Pass = document.getElementById("Pass").value;
+            socketio.emit("Password_Check", { message: Pass })
+        }
+    </script>
+</head>
+
+<body>
+    <div id="PassDIV">
+        <label for="Pass">Password?</label>
+        <input type="text" id="Pass" name="Pass" /><br><br>
+        <button onclick="checkPass()">Login</button>
+    </div>
+    <div id="Bot">
+        <label for="Pin">Game Pin:</label>
+        <input type="text" id="Pin" name="Pin" /><br><br>
+        <label for="Number">Amount of bots:</label>
+        <input type="text" id="Number" name="Number" /><br><br>
+        <label for="Name">Name of bots(Optional):</label>
+        <input type="text" id="Name" name="Name" /><br><br>
+        <button onclick="sendMessage()">send</button>
+    </div>
+    <div id="chatlog"></div>
+</body>
+
+<script>
+    document.getElementById("Bot").style.display = "none";
+    document.getElementById("PassDIV").style.display = "block";
+</script>
+
+</html>
